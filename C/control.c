@@ -22,8 +22,8 @@ int main(int argc, char *argv[]){
 
   /*  number of timesteps to use. */
   int Nstep=100;
-  int Nsave=5;
-  
+  //int Nsave=5;
+  int Nsave=1;
   if( argc > 1 ){
     Nstep=atoi(argv[1]);
   }

@@ -23,7 +23,7 @@
 #define  Npair ((Nbody*(Nbody-1))/2)
 
 enum{ Xcoord=0, Ycoord, Zcoord, Ndim };
-      
+// Declare arrays
 DEF double *pos[Ndim], *velo[Ndim];
 DEF double *f[Ndim], *vis, *mass, *radius;
 DEF double *delta_pos[3];

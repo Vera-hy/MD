@@ -12,9 +12,6 @@ double force(double W, double delta, double r);
 void wind_force(int N,double *f, double *vis, double vel);
 
 
-
-
-
 void evolve(int count,double dt){
 int  step;
 int i,j,k,l;

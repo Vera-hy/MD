@@ -17,5 +17,10 @@ module load intel-compilers-18
 # Run the parallel program
 ./MD
 
+# Have a look at the profile
+# gprof -b MD gmon.out > gprof.txt
+# rm gmon.out
+
+
 
 

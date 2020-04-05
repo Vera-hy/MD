@@ -3,4 +3,4 @@
 cd ../Test;
 make clean;
 make;
-./diff-output ../C/$1 ../C/initial_output/$1
+./diff-output ../C/output.dat100 ../C/output_ref/output.dat100

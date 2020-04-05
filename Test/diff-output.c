@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 #define  Nbody 4*1024
 
@@ -13,6 +14,10 @@
 #define ERROR_LEVEL 0.05
 
 double error(double v1, double v2){
+    //If the presence of NAN values is detected, return the largest available double-precision floating point value
+  if (isnan(v1) || isnan(v2)){
+      return DBL_MAX;
+  }
   double diff = fabs(v1 -v2);
   double sum = fabs(v1+v2);
   if( sum != 0.0 ){
@@ -93,8 +98,10 @@ int status=0;
 
   printf("max=%lf\n",max);
   if( max > ERROR_LEVEL ){
+     printf("The answer is wrong\n");
      return 1;
   }else{
+    printf("The answer is correct\n");
     return 0;
   }
 }
