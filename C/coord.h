@@ -32,12 +32,16 @@ DEF double *delta_r;
 DEF double wind[Ndim];
 DEF int collisions;*/
 
-DEF double pos[Ndim][Nbody], velo[Ndim][Nbody];
-DEF double f[Ndim][Nbody], vis[Nbody], mass[Nbody], radius[Nbody];
-DEF double delta_pos[Ndim][Npair];
-DEF double r[Nbody];
-DEF double delta_r[Npair];
-DEF double wind[Ndim];
+DEF double pos[Ndim][Nbody]__attribute__((aligned(64)));
+DEF double velo[Ndim][Nbody]__attribute__((aligned(64)));
+DEF double f[Ndim][Nbody]__attribute__((aligned(64)));
+DEF double vis[Nbody]__attribute__((aligned(64)));
+DEF double mass[Nbody]__attribute__((aligned(64)));
+DEF double radius[Nbody]__attribute__((aligned(64)));
+DEF double delta_pos[Ndim][Npair]__attribute__((aligned(64)));
+DEF double r[Nbody]__attribute__((aligned(64)));
+DEF double delta_r[Npair]__attribute__((aligned(64)));
+DEF double wind[Ndim]__attribute__((aligned(64)));
 DEF int collisions;
 
 #define G 2.0
