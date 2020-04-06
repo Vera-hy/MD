@@ -49,6 +49,7 @@ double Size;
                    force(G*mass[i]*M_central,pos[l][i],r[i]);
 	  }
 	}
+
 /* calculate pairwise separation of particles */
         k = 0;
         for(i=0;i<Nbody;i++){

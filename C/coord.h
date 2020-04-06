@@ -24,11 +24,19 @@
 
 enum{ Xcoord=0, Ycoord, Zcoord, Ndim };
 // Declare arrays
-DEF double *pos[Ndim], *velo[Ndim];
+/*DEF double *pos[Ndim], *velo[Ndim];
 DEF double *f[Ndim], *vis, *mass, *radius;
 DEF double *delta_pos[3];
 DEF double *r;
 DEF double *delta_r;
+DEF double wind[Ndim];
+DEF int collisions;*/
+
+DEF double pos[Ndim][Nbody], velo[Ndim][Nbody];
+DEF double f[Ndim][Nbody], vis[Nbody], mass[Nbody], radius[Nbody];
+DEF double delta_pos[Ndim][Npair];
+DEF double r[Nbody];
+DEF double delta_r[Npair];
 DEF double wind[Ndim];
 DEF int collisions;
 

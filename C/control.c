@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
   wind[Ycoord] = 0.4;
   wind[Zcoord] = 0.0;
   /* set up multi dimensional arrays */
-  r = calloc(Nbody,sizeof(double));
+  /*r = calloc(Nbody,sizeof(double));
   delta_r = calloc(Nbody*Nbody,sizeof(double));
   mass = calloc(Nbody,sizeof(double));
   radius = calloc(Nbody,sizeof(double));
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
     pos[i] = pos[0] + i * Nbody;
     velo[i] = velo[0] + i * Nbody;
     delta_pos[i] = delta_pos[0] + i*Nbody*Nbody;
-  }
+  }*/
 
 /* read the initial data from a file */
 
