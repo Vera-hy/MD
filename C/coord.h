@@ -37,6 +37,7 @@ DEF double r[Nbody]__attribute__((aligned(64)));
 DEF double delta_r[Npair]__attribute__((aligned(64)));
 DEF double wind[Ndim]__attribute__((aligned(64)));
 DEF int collisions;*/
+DEF int collisions;
 #define PADDING 64
 /*
 DEF double pos[Nbody][Ndim] __attribute__((aligned(64)));
@@ -55,7 +56,8 @@ DEF int collisions;
 #define M_central 1000.0
 #define cM_multi_G 2000.0
 
-void evolve(int Nstep, double dt, double pos[Nbody][Ndim],double velo[Nbody][Ndim],double* vis,double* radius,double* mass,double* wind,int collisions);
+void evolve(int Nstep, double dt, double pos[Nbody][Ndim],double velo[Nbody][Ndim],
+        double * restrict vis,double* restrict radius,double* restrict mass,double* restrict wind);
 
 inline void outside_force(int N,double *f, double vis, double *velo, double *wind)
 {

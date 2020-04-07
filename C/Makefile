@@ -1,16 +1,18 @@
-SRC=MD.c control.c util.c 
+SRC=MD.c control.c #util.c
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= #-g -O0 -check=uninit -check-pointers:rw -no-vec
-Profile_FLAG= #-pg
-OPTIMIZATION_FLAG= -Ofast
-ISA_FLAG= -xBROADWELL
+CFLAGS= -restrict  -Ofast  -xBROADWELL  
+#-g -O0 -check=uninit -check-pointers:rw -no-vec
+#Profile_FLAG= #-pg
+#OPTIMIZATION_FLAG= -Ofast
+#ISA_FLAG= -xBROADWELL
+#VECT_FLAG= -restrict -qopenmp-simd
 
 
 all: MD
 
 MD: $(OBJ)
-	$(CC) $(CFLAGS) $(Profile_FLAG) $(OPTIMIZATION_FLAG) $(ISA_FLAG) -o $@  $(OBJ) -lm
+	$(CC) $(CFLAGS) $(Profile_FLAG) $(OPTIMIZATION_FLAG) $(ISA_FLAG) $(VECT_FLAG) -o $@  $(OBJ) -lm
 
 
 output.dat: MD input.dat

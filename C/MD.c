@@ -10,7 +10,8 @@
 static double f[Nbody][Ndim] __attribute__((aligned(64)));
 static double delta_pos[Ndim + PADDING] __attribute__((aligned(64)));
 
-void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim],double* vis,double* radius,double* mass,double* wind,int collisions) {
+void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim],
+        double * restrict vis,double* restrict radius,double* restrict mass,double* restrict wind) {
     int step;
     int i, j, k, l;
     double Size;
@@ -20,6 +21,7 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
     for (step = 1; step <= count; step++) {
         printf("timestep %d\n", step);
         printf("collisions %d\n", collisions);
+//#pragma omp simd
         for (k = 0; k < Nbody; k++) {
 /* set the viscosity term and wind term in the force calculation */
             outside_force(Ndim, f[k], vis[k], velo[k], wind);
@@ -58,7 +60,7 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
                         f[j][l] += calc_force;
                     }
                 }
-                /* if two particles are too close, they will collide */
+                    /* if two particles are too close, they will collide */
                 else {
                     for(l=0; l<Ndim; l++) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
