@@ -7,10 +7,12 @@
 #include "coord.h"
 
 //void vis_force(int N,double *f, double *vis, double *vel);
+//void vis_force(int N,double *f, double vis, double *vel);
 void add_norm(int N,double *r, double *delta);
 double force(double W, double delta, double r);
 //void wind_force(int N,double *f, double *vis, double vel);
-void visc_wind_force(int N,double *f, double *vis, double *velo, double wind);
+//void wind_force(int N,double *f, double vis, double *wind);
+void visc_wind_force(int N,double *f, double vis, double *velo, double *wind);
 
 
 void evolve(int count,double dt) {
@@ -32,6 +34,13 @@ void evolve(int count,double dt) {
                 f[i][j] = -vis[i] * velo[i][j];
             }
         }*/
+        for (i = 0; i < Nbody; i++) {
+            //visc_force(Nbody,f[j],vis,velo[j]);
+//            for (j = 0; j < Ndim; j++) {
+//                f[i][j] = -vis[i] * velo[i][j];
+//            }
+            visc_wind_force(Ndim,f[i],vis[i],velo[i],wind);
+        }
 /* add the wind term in the force calculation */
         /*for (j = 0; j < Ndim; j++) {
             //wind_force(Nbody,f[j],vis,wind[j]);
@@ -39,20 +48,29 @@ void evolve(int count,double dt) {
                 f[i][j] += -vis[i] * wind[j];
             }
         }*/
-        for (j = 0; j < Ndim; j++) {
-            for (i = 0; i < Nbody; i++) {
-                f[i][j] = -vis[i] * (velo[i][j] + wind[j]);
-            }
-        }
+       // for (i = 0; i < Nbody; i++) {
+            //wind_force(Nbody,f[j],vis,wind[j]);
+//            for (j = 0; j < Ndim; j++) {
+//                f[i][j] += -vis[i] * wind[j];
+//            }
+       //     wind_force(Ndim,f[i],vis[i],wind);
+      //  }
 /* calculate distance from central mass */
         for (k = 0; k < Nbody; k++) {
             r[k] = 0.0;
         }
-        for (i = 0; i < Ndim; i++) {
+        /*for (i = 0; i < Ndim; i++) {
             //add_norm(Nbody,r,pos[i]);
             for (k = 0; k < Nbody; k++) {
                 r[k] += pos[k][i] * pos[k][i];
             }
+        }*/
+        for (k = 0; k < Nbody; k++) {
+            //add_norm(Nbody,r,pos[i]);
+//            for (i = 0; i < Ndim; i++) {
+//                r[k] += pos[k][i] * pos[k][i];
+//            }
+            add_norm(Ndim,&r[k],pos[k]);
         }
         for (k = 0; k < Nbody; k++) {
             r[k] = sqrt(r[k]);
@@ -82,11 +100,18 @@ void evolve(int count,double dt) {
         for (k = 0; k < Npair; k++) {
             delta_r[k] = 0.0;
         }
-        for (i = 0; i < Ndim; i++) {
+        /*for (i = 0; i < Ndim; i++) {
             //add_norm(Npair,delta_r,delta_pos[i]);
             for (k = 0; k < Npair; k++) {
                 delta_r[k] += delta_pos[k][i] * delta_pos[k][i];
             }
+        }*/
+        for (k = 0; k < Npair; k++) {
+            //add_norm(Npair,delta_r,delta_pos[i]);
+//            for (i = 0; i < Ndim; i++) {
+//                delta_r[k] += delta_pos[k][i] * delta_pos[k][i];
+//            }
+            add_norm(Ndim,&delta_r[k],delta_pos[k]);
         }
         for (k = 0; k < Npair; k++) {
             delta_r[k] = sqrt(delta_r[k]);
