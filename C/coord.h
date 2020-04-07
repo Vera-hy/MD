@@ -38,6 +38,7 @@ DEF double delta_r[Npair]__attribute__((aligned(64)));
 DEF double wind[Ndim]__attribute__((aligned(64)));
 DEF int collisions;*/
 #define PADDING 64
+/*
 DEF double pos[Nbody][Ndim] __attribute__((aligned(64)));
 DEF double velo[Nbody][Ndim] __attribute__((aligned(64)));
 //DEF double f[Nbody][Ndim] __attribute__((aligned(64)));
@@ -49,14 +50,14 @@ DEF double mass[Nbody + PADDING] __attribute__((aligned(64)));
 //DEF double delta_r[Npair + PADDING] __attribute__((aligned(64)));
 DEF double wind[Ndim + PADDING] __attribute__((aligned(64)));
 DEF int collisions;
-
+*/
 #define G 2.0
 #define M_central 1000.0
 #define cM_multi_G 2000.0
 
-void evolve(int Nstep, double dt);
+void evolve(int Nstep, double dt, double pos[Nbody][Ndim],double velo[Nbody][Ndim],double* vis,double* radius,double* mass,double* wind,int collisions);
 
-inline void visc_wind_force(int N,double *f, double vis, double *velo, double *wind)
+inline void outside_force(int N,double *f, double vis, double *velo, double *wind)
 {
     int j;
     for(j=0;j<N;j++){

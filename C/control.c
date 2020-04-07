@@ -10,6 +10,14 @@
 #define DECL
 #include "coord.h"
 
+static double pos[Nbody][Ndim] __attribute__((aligned(64)));
+static double velo[Nbody][Ndim] __attribute__((aligned(64)));
+static double vis[Nbody + PADDING] __attribute__((aligned(64)));
+static double radius[Nbody + PADDING] __attribute__((aligned(64)));
+static double mass[Nbody + PADDING] __attribute__((aligned(64)));
+static double wind[Ndim + PADDING] __attribute__((aligned(64)));
+static int collisions;
+
 double second(void); 
 int main(int argc, char *argv[]){
   int i,j;
@@ -74,7 +82,7 @@ int main(int argc, char *argv[]){
    tstart=second();
    for(j=1;j<=Nsave;j++){
       start=second();
-      evolve(Nstep,dt); 
+      evolve(Nstep,dt,pos,velo,vis,radius,mass,wind,collisions);
       stop=second();
       printf("%d timesteps took %f seconds\n",Nstep,stop-start);
       printf("collisions %d\n",collisions);
