@@ -82,8 +82,8 @@ void evolve(int count,double dt) {
         }
 
 /* update positions and velocities */
-        for (i = 0; i < Nbody; i++) {
-       // for(i=Nbody-1; i>=0; i--) {
+        //for (i = 0; i < Nbody; i++) {
+        for(i=Nbody-1; i>=0; i--) {
             for (j = 0; j < Ndim; j++) {
                 pos[i][j] += +dt * velo[i][j];
                 velo[i][j] += +dt * (f[i][j] / mass[i]);
