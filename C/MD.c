@@ -39,44 +39,42 @@ void evolve(int count,double dt) {
             }
         }
 
-/* calculate pairwise separation of particles */
+/*
+    * add pairwise forces.
+    */
         k = 0;
-        for (i = 0; i < Nbody; i++) {
-            for (j = i + 1; j < Nbody; j++) {
-                for (l = 0; l < Ndim; l++) {
-                    //delta_pos[l][k] = pos[l][i] - pos[l][j];
+        for(i=0; i<Nbody; i++) {
+            for(j=i+1; j<Nbody; j++) {
+
+                /* calculate pairwise separation of particles */
+                for(l=0; l<Ndim; l++) {
                     delta_pos[k][l] = pos[i][l] - pos[j][l];
                 }
-                k = k + 1;
-            }
-        }
-        for (k = 0; k < Npair; k++) {
-/* calculate norm of separation vector */
-            delta_r[k] = 0.0;
-            add_norm(Ndim, &delta_r[k], delta_pos[k]);
-            delta_r[k] = sqrt(delta_r[k]);
-        }
 
-/*
- * add pairwise forces.
- */
-        k = 0;
-        for (i = 0; i < Nbody; i++) {
-            for (j = i + 1; j < Nbody; j++) {
+                /* calculate norm of separation vector */
+                delta_r[k] = 0.0;
+                add_norm(Ndim, &delta_r[k], delta_pos[k]);
+                delta_r[k] = sqrt(delta_r[k]);
+
                 Size = radius[i] + radius[j];
-                collided = 0;
-                for (l = 0; l < Ndim; l++) {
-/*  flip force if close in */
-                    if (delta_r[k] >= Size) {
-                        f[i][l] -= force(G * mass[i] * mass[j], delta_pos[k][l], delta_r[k]);
-                        f[j][l] += force(G * mass[i] * mass[j], delta_pos[k][l], delta_r[k]);
-                    } else {
-                        f[i][l] += force(G * mass[i] * mass[j], delta_pos[k][l], delta_r[k]);
-                        f[j][l] -= force(G * mass[i] * mass[j], delta_pos[k][l], delta_r[k]);
-                        collided = 1;
+                collided=0;
+
+                /*  flip force if close in */
+                if( delta_r[k] >= Size ) {
+                    for(l=0; l<Ndim; l++) {
+                        f[i][l] -= force(G*mass[i]*mass[j],delta_pos[k][l],delta_r[k]);
+                        f[j][l] += force(G*mass[i]*mass[j],delta_pos[k][l],delta_r[k]);
                     }
                 }
-                if (collided == 1) {
+                else {
+                    for(l=0; l<Ndim; l++) {
+                        f[i][l] += force(G*mass[i]*mass[j],delta_pos[k][l],delta_r[k]);
+                        f[j][l] -= force(G*mass[i]*mass[j],delta_pos[k][l],delta_r[k]);
+                        collided=1;
+                    }
+                }
+
+                if( collided == 1 ){
                     collisions++;
                 }
                 k = k + 1;
@@ -84,8 +82,8 @@ void evolve(int count,double dt) {
         }
 
 /* update positions and velocities */
-       // for (i = 0; i < Nbody; i++) {
-        for(i=Nbody-1; i>=0; i--) {
+        for (i = 0; i < Nbody; i++) {
+       // for(i=Nbody-1; i>=0; i--) {
             for (j = 0; j < Ndim; j++) {
                 pos[i][j] += +dt * velo[i][j];
                 velo[i][j] += +dt * (f[i][j] / mass[i]);
