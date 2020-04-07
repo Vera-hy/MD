@@ -5,26 +5,18 @@
 #include <stdio.h>
 #include <math.h>
 #include "coord.h"
-#include "util.h"
 
-//void vis_force(int N,double *f, double *vis, double *vel);
-//void vis_force(int N,double *f, double vis, double *vel);
-//void add_norm(int N,double *r, double *delta);
-//double force(double W, double delta, double r);
-//void wind_force(int N,double *f, double *vis, double vel);
-//void wind_force(int N,double *f, double vis, double *wind);
-//void visc_wind_force(int N,double *f, double vis, double *velo, double *wind);
-
+/* In C, use file scope globals in preference to externals if possible */
+static double f[Nbody][Ndim] __attribute__((aligned(64)));
+static double delta_pos[Ndim + PADDING] __attribute__((aligned(64)));
 
 void evolve(int count,double dt) {
     int step;
     int i, j, k, l;
-    //int collided;
     double Size;
 /*
  * Loop over timesteps.
  */
-    //int cM_multi_G = M_central * G;
     for (step = 1; step <= count; step++) {
         printf("timestep %d\n", step);
         printf("collisions %d\n", collisions);
@@ -32,15 +24,16 @@ void evolve(int count,double dt) {
 /* set the viscosity term and wind term in the force calculation */
             visc_wind_force(Ndim, f[k], vis[k], velo[k], wind);
 /* calculate distance from central mass */
-            double r;
-            r = add_norm(Ndim, pos[k]);
-           // r[k] = 0.0;
-           // add_norm(Ndim, &r[k], pos[k]);
-           // r[k] = sqrt(r[k]);
-/* calculate central force */
+            double r = 0;
             for (l = 0; l < Ndim; l++) {
-                //f[k][l] -= force(G * mass[k] * M_central, pos[k][l], r[k]);
-                //f[k][l] -= force(mass[k] * cM_multi_G, pos[k][l], r[k]);
+                r += pos[k][l] * pos[k][l];
+            }
+            r = sqrt(r);
+
+            //r = sqrt(add_norm(Ndim, pos[k]));
+/* calculate central force */
+           //for (l = 0; l < Ndim; l++) {
+            for (l = Ndim -1 ; l >= 0 ; l--) {
                 f[k][l] -= force(mass[k] * cM_multi_G, pos[k][l], r);
             }
         }
@@ -48,34 +41,26 @@ void evolve(int count,double dt) {
 /*
     * add pairwise forces.
     */
-       // k = 0;
         for(i=0; i<Nbody; i++) {
             for(j=i+1; j<Nbody; j++) {
                 double G_multi_mSquare = G*mass[i]*mass[j];
+                double delta_r = 0;
 
                 /* calculate pairwise separation of particles */
                 for(l=0; l<Ndim; l++) {
-                    //delta_pos[k][l] = pos[i][l] - pos[j][l];
                     delta_pos[l] = pos[i][l] - pos[j][l];
+                    delta_r += delta_pos[l] * delta_pos[l];
                 }
+                delta_r = sqrt(delta_r);
 
-                /* calculate norm of separation vector */
-                //delta_r[k] = 0.0;
-                //add_norm(Ndim, &delta_r[k], delta_pos[k]);
-               // delta_r[k] = sqrt(delta_r[k]);
-                double delta_r;
-                //delta_r = add_norm(Ndim, delta_pos[k]);
-                delta_r = add_norm(Ndim, delta_pos);
+//                double delta_r;
+//                delta_r = sqrt(add_norm(Ndim, delta_pos));
 
                 Size = radius[i] + radius[j];
-               // collided=0;
 
-                /*  flip force if close in */
-                //if( delta_r[k] >= Size ) {
                 if( delta_r >= Size ) {
                     for(l=0; l<Ndim; l++) {
-                       //double calc_force = force(G_multi_mSquare,delta_pos[k][l],delta_r[k]);
-                        //double calc_force = force(G_multi_mSquare,delta_pos[k][l],delta_r);
+                   // for(l=Ndim - 1; l >= 0; l--) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
                         f[i][l] -= calc_force;
                         f[j][l] += calc_force;
@@ -83,21 +68,17 @@ void evolve(int count,double dt) {
                 }
                 else {
                     for(l=0; l<Ndim; l++) {
-                        //double calc_force = force(G_multi_mSquare,delta_pos[k][l],delta_r[k]);
-                        //double calc_force = force(G_multi_mSquare,delta_pos[k][l],delta_r);
+                    //for(l=Ndim - 1; l >= 0; l--) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
                         f[i][l] += calc_force;
                         f[j][l] -= calc_force;
                     }
                     collisions++;
                 }
-
-            //    k = k + 1;
             }
         }
 
 /* update positions and velocities */
-        //for (i = 0; i < Nbody; i++) {
         for(i=Nbody-1; i>=0; i--) {
             for (j = 0; j < Ndim; j++) {
                 pos[i][j] += +dt * velo[i][j];
