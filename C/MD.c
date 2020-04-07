@@ -26,61 +26,16 @@ void evolve(int count,double dt) {
     for (step = 1; step <= count; step++) {
         printf("timestep %d\n", step);
         printf("collisions %d\n", collisions);
-
-/* set the viscosity term in the force calculation */
-        /*for (j = 0; j < Ndim; j++) {
-            //visc_force(Nbody,f[j],vis,velo[j]);
-            for (i = 0; i < Nbody; i++) {
-                f[i][j] = -vis[i] * velo[i][j];
-            }
-        }*/
-        for (i = 0; i < Nbody; i++) {
-            //visc_force(Nbody,f[j],vis,velo[j]);
-//            for (j = 0; j < Ndim; j++) {
-//                f[i][j] = -vis[i] * velo[i][j];
-//            }
-            visc_wind_force(Ndim,f[i],vis[i],velo[i],wind);
-        }
-/* add the wind term in the force calculation */
-        /*for (j = 0; j < Ndim; j++) {
-            //wind_force(Nbody,f[j],vis,wind[j]);
-            for (i = 0; i < Nbody; i++) {
-                f[i][j] += -vis[i] * wind[j];
-            }
-        }*/
-       // for (i = 0; i < Nbody; i++) {
-            //wind_force(Nbody,f[j],vis,wind[j]);
-//            for (j = 0; j < Ndim; j++) {
-//                f[i][j] += -vis[i] * wind[j];
-//            }
-       //     wind_force(Ndim,f[i],vis[i],wind);
-      //  }
+        for (k = 0; k < Nbody; k++) {
+/* set the viscosity term and wind term in the force calculation */
+            visc_wind_force(Ndim, f[k], vis[k], velo[k], wind);
 /* calculate distance from central mass */
-        for (k = 0; k < Nbody; k++) {
             r[k] = 0.0;
-        }
-        /*for (i = 0; i < Ndim; i++) {
-            //add_norm(Nbody,r,pos[i]);
-            for (k = 0; k < Nbody; k++) {
-                r[k] += pos[k][i] * pos[k][i];
-            }
-        }*/
-        for (k = 0; k < Nbody; k++) {
-            //add_norm(Nbody,r,pos[i]);
-//            for (i = 0; i < Ndim; i++) {
-//                r[k] += pos[k][i] * pos[k][i];
-//            }
-            add_norm(Ndim,&r[k],pos[k]);
-        }
-        for (k = 0; k < Nbody; k++) {
+            add_norm(Ndim, &r[k], pos[k]);
             r[k] = sqrt(r[k]);
-        }
-        /* calculate central force */
-        for (i = 0; i < Nbody; i++) {
+/* calculate central force */
             for (l = 0; l < Ndim; l++) {
-                //f[l][i] = f[l][i] -
-                //  force(G*mass[i]*M_central,pos[l][i],r[i]);
-                f[i][l] -= force(G * mass[i] * M_central, pos[i][l], r[i]);
+                f[k][l] -= force(G * mass[k] * M_central, pos[k][l], r[k]);
             }
         }
 
@@ -95,26 +50,27 @@ void evolve(int count,double dt) {
                 k = k + 1;
             }
         }
-
+        for (k = 0; k < Npair; k++) {
 /* calculate norm of separation vector */
-        for (k = 0; k < Npair; k++) {
+            //for (k = 0; k < Npair; k++) {
             delta_r[k] = 0.0;
-        }
-        /*for (i = 0; i < Ndim; i++) {
-            //add_norm(Npair,delta_r,delta_pos[i]);
-            for (k = 0; k < Npair; k++) {
-                delta_r[k] += delta_pos[k][i] * delta_pos[k][i];
-            }
-        }*/
-        for (k = 0; k < Npair; k++) {
+            //}
+            /*for (i = 0; i < Ndim; i++) {
+                //add_norm(Npair,delta_r,delta_pos[i]);
+                for (k = 0; k < Npair; k++) {
+                    delta_r[k] += delta_pos[k][i] * delta_pos[k][i];
+                }
+            }*/
+            // for (k = 0; k < Npair; k++) {
             //add_norm(Npair,delta_r,delta_pos[i]);
 //            for (i = 0; i < Ndim; i++) {
 //                delta_r[k] += delta_pos[k][i] * delta_pos[k][i];
 //            }
-            add_norm(Ndim,&delta_r[k],delta_pos[k]);
-        }
-        for (k = 0; k < Npair; k++) {
+            add_norm(Ndim, &delta_r[k], delta_pos[k]);
+            // }
+            //  for (k = 0; k < Npair; k++) {
             delta_r[k] = sqrt(delta_r[k]);
+            //  }
         }
 
 /*
@@ -151,21 +107,23 @@ void evolve(int count,double dt) {
             }
         }
 
-/* update positions */
+/* update positions and velocities */
         for (i = 0; i < Nbody; i++) {
             for (j = 0; j < Ndim; j++) {
                 //pos[j][i] = pos[j][i] + dt * velo[j][i];
                 pos[i][j] += +dt * velo[i][j];
+                velo[i][j] += +dt * (f[i][j] / mass[i]);
             }
         }
 
-/* update velocities */
+/* update velocities
         for (i = 0; i < Nbody; i++) {
             for (j = 0; j < Ndim; j++) {
                 //velo[j][i] = velo[j][i] + dt * (f[j][i]/mass[i]);
                 velo[i][j] += +dt * (f[i][j] / mass[i]);
             }
         }
+        */
 
 
     }
