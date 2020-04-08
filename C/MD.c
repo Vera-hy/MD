@@ -27,10 +27,14 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
             outside_force(Ndim, f[k], vis[k], velo[k], wind);
 /* calculate distance from central mass */
             double r = 0;
+#pragma ivdep
+#pragma vector aligned
             for (l = 0; l < Ndim; l++) {
                 r += pos[k][l] * pos[k][l];
             }
             r = sqrt(r);
+#pragma ivdep
+#pragma vector aligned
 /* add central force */
             for (l = Ndim -1 ; l >= 0 ; l--) {
                 f[k][l] -= force(mass[k] * cM_multi_G, pos[k][l], r);
@@ -42,7 +46,8 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
             for(j=i+1; j<Nbody; j++) {
                 double G_multi_mSquare = G*mass[i]*mass[j];
                 double delta_r = 0;
-
+#pragma ivdep
+#pragma vector aligned
                 /* calculate pairwise separation of particles */
                 for(l=0; l<Ndim; l++) {
                     delta_pos[l] = pos[i][l] - pos[j][l];
@@ -54,6 +59,8 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
                 Size = radius[i] + radius[j];
 
                 if( delta_r >= Size ) {
+#pragma ivdep
+#pragma vector aligned
                     for(l=0; l<Ndim; l++) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
                         f[i][l] -= calc_force;
@@ -62,6 +69,8 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
                 }
                     /* if two particles are too close, they will collide */
                 else {
+#pragma ivdep
+#pragma vector aligned
                     for(l=0; l<Ndim; l++) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
                         f[i][l] += calc_force;
@@ -74,6 +83,8 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
 
 /* update positions and velocities */
         for(i=Nbody-1; i>=0; i--) {
+#pragma ivdep
+#pragma vector aligned
             for (j = 0; j < Ndim; j++) {
                 pos[i][j] += +dt * velo[i][j];
                 velo[i][j] += +dt * (f[i][j] / mass[i]);

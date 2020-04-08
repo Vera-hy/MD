@@ -1,7 +1,7 @@
 SRC=MD.c control.c #util.c
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= -restrict  -Ofast  -xBROADWELL  
+CFLAGS= -restrict  -Ofast -qopt-report=5 -xCORE-AVX2 #-xBROADWELL #-xMIC-AVX2
 #-g -O0 -check=uninit -check-pointers:rw -no-vec
 #Profile_FLAG= #-pg
 #OPTIMIZATION_FLAG= -Ofast

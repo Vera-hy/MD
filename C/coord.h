@@ -62,6 +62,8 @@ void evolve(int Nstep, double dt, double pos[Nbody][Ndim],double velo[Nbody][Ndi
 inline void outside_force(int N,double *f, double vis, double *velo, double *wind)
 {
     int j;
+    #pragma ivdep
+    #pragma vector aligned
     for(j=0;j<N;j++){
         //f[i] = -vis[i] * velo[i];
         f[j] = -vis * (velo[j] + wind[j]);
