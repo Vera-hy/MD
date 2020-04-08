@@ -21,19 +21,21 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
     for (step = 1; step <= count; step++) {
         printf("timestep %d\n", step);
         printf("collisions %d\n", collisions);
-//#pragma omp simd
+
         for (k = 0; k < Nbody; k++) {
 /* set the viscosity term and wind term in the force calculation */
             outside_force(Ndim, f[k], vis[k], velo[k], wind);
 /* calculate distance from central mass */
             double r = 0;
 #pragma ivdep
+#pragma omp simd
 #pragma vector aligned
             for (l = 0; l < Ndim; l++) {
                 r += pos[k][l] * pos[k][l];
             }
             r = sqrt(r);
 #pragma ivdep
+#pragma omp simd
 #pragma vector aligned
 /* add central force */
             for (l = Ndim -1 ; l >= 0 ; l--) {
@@ -47,6 +49,7 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
                 double G_multi_mSquare = G*mass[i]*mass[j];
                 double delta_r = 0;
 #pragma ivdep
+#pragma omp simd
 #pragma vector aligned
                 /* calculate pairwise separation of particles */
                 for(l=0; l<Ndim; l++) {
@@ -60,6 +63,7 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
 
                 if( delta_r >= Size ) {
 #pragma ivdep
+#pragma omp simd
 #pragma vector aligned
                     for(l=0; l<Ndim; l++) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
@@ -70,6 +74,7 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
                     /* if two particles are too close, they will collide */
                 else {
 #pragma ivdep
+#pragma omp simd
 #pragma vector aligned
                     for(l=0; l<Ndim; l++) {
                         double calc_force = force(G_multi_mSquare,delta_pos[l],delta_r);
@@ -84,7 +89,9 @@ void evolve(int count,double dt,double pos[Nbody][Ndim],double velo[Nbody][Ndim]
 /* update positions and velocities */
         for(i=Nbody-1; i>=0; i--) {
 #pragma ivdep
+//#pragma omp simd aligned(pos:64,velo:64,f:64,mass:64)
 #pragma vector aligned
+#pragma omp simd
             for (j = 0; j < Ndim; j++) {
                 pos[i][j] += +dt * velo[i][j];
                 velo[i][j] += +dt * (f[i][j] / mass[i]);

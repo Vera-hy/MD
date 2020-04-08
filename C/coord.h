@@ -63,6 +63,7 @@ inline void outside_force(int N,double *f, double vis, double *velo, double *win
 {
     int j;
     #pragma ivdep
+    #pragma omp simd
     #pragma vector aligned
     for(j=0;j<N;j++){
         //f[i] = -vis[i] * velo[i];
