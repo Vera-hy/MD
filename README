@@ -1,3 +1,7 @@
+# Performance_Programming_CW
+
+## Introduction
+
 This directory contains a simple molecular dynamics (MD) code
 
 The program implements:
@@ -8,8 +12,7 @@ The program implements:
 If 2 particles approach closer than Size we flip the direction of the
 interaction force to approximate a collision.
 
-Coordinates are relative to a large central mass and the entire system is moving relative to the
-viscous media.
+Coordinates are relative to a large central mass and the entire system is moving relative to the viscous media.
 
 This program was developed as part of a code optimisation course
 and is therefore deliberately inefficient.
@@ -22,3 +25,42 @@ The program reads input.dat and writes output.dat.
 The directory Test contains source of a program to compare output.dat files.
 It will only report differences above a preset tolerance value.
 
+## How to Compile and Run the code on Cirrus
+
+- Log into Cirrus
+
+- Follow this path to access to the final code version: B155696_PP_CW_Code -> Final_Version
+
+- Go to the C directory
+
+- ```
+  module load inetl-compilers-18
+  ```
+
+- Compile the code using ICC
+
+  ```
+  make
+  ```
+
+- Run the code on the login node
+
+  ```
+  ./MD
+  ```
+
+- Run the code on the compute node
+
+  ```
+  cd ..
+  qsub bench_c.pbs
+  ```
+
+- Test for correctness
+
+  ```
+  cd C
+  ./auto_test.sh
+  ```
+
+  
